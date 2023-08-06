@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .success,
+      .error {
+        color: white;
+        padding: 5px;
+        margin: 5px 0 15px 0;
+      }
+
+      .success {
+        background: green;
+      }
+
+      .error {
+        background: red;
+      }
+    </style>
+    <title>Book List</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add Book</h1>
+
+      <!--İnput alanı başlangıç-->
+
+      <form id="form">
+        <div id="alert"></div>
+        <div>
+          <label for="title"> <strong>Title</strong></label>
+          <input type="text" id="title" class="u-full-width" name="title" />
+        </div>
+        <div>
+          <label for="author"> <strong>Author</strong> </label>
+          <input type="text" id="author" class="u-full-width" name="author" />
+        </div>
+        <div>
+          <label for="isbn"> <strong>ISBN#</strong> </label>
+          <input type="text" id="isbn" class="u-full-width" name="isbn" />
+        </div>
+        <button type="submit" class="submitButton">Submit</button>
+      </form>
+
+      <!--İnput alanı bitiş-->
+
+      <!--submit  başlangıç-->
+
+      <!--Submit bitişi-->
+
+      <!--Tablo Başlangıcı -->
+      <table class="u-full-width">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="book-list"></tbody>
+      </table>
+      <!--Tablo Tablo Bitişi -->
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
