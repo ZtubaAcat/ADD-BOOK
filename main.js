@@ -3,7 +3,7 @@ var author = document.querySelector("#author");
 var isbn = document.querySelector("#ISBN");
 var booklist = document.querySelector("#book-list");
 var form = document.getElementById("form");
-var book = [];
+var books = [];
 //input alma
 
 //Form event listener
@@ -14,9 +14,17 @@ form.addEventListener("submit", function (e) {
   var title = data.get("title");
   var author = data.get("author");
   var isbn = data.get("isbn");
+
   if (title != "" && author != "" && isbn != "") {
-    book.push(title, author, isbn);
-    addBookToList(book);
+    var book = {
+      title: title,
+      author: author,
+      isbn: isbn,
+    };
+    //addBookToList(book);
+    books.push(book);
+    console.log(books);
+    drawList();
     e.target.reset();
     alert("success");
   } else {
@@ -24,34 +32,35 @@ form.addEventListener("submit", function (e) {
   }
 });
 
-//AddBook-removeBook part start
-function addBookToList(book) {
+//Tabloyu her işlemden sonra çizdirmek için kullanılır. Silme işleminden ve ekleme işleminden sonra çağırılacaktır.
+function drawList() {
   var list = document.querySelector("#book-list");
+  list.innerHTML = "";
+  books.forEach((book) => {
+    var row = document.createElement("tr");
+    var title = document.createElement("td");
+    var author = document.createElement("td");
+    var isbn = document.createElement("td");
+    var deleteButton = document.createElement("td");
+    title.textContent = book.title;
+    author.textContent = book.author;
+    isbn.textContent = book.isbn;
+    deleteButton.textContent = "X";
 
-  var row = document.createElement("tr");
-  row.innerHTML = `
-        <td>${book[0]}</td>
-        <td>${book[1]}</td>
-        <td>${book[2]}</td>
-        <td><a href="#" class="button">X</a></td>
-    `;
+    list.appendChild(row);
+    row.appendChild(title);
+    row.appendChild(author);
+    row.appendChild(isbn);
+    row.appendChild(deleteButton);
 
-  list.appendChild(row);
+    deleteButton.addEventListener("click", function (e) {
+      console.log("tiklandi");
+      var row = e.target.parentNode;
+      var index = Array.prototype.indexOf.call(row.parentNode.children, row);
+      deleterow(row, index);
+    });
+  });
 }
-
-function removeBookToList(book) {
-  var list = document.querySelector("#book-list");
-  var row = document.documentElement.remove("tr");
-  row.innerHTML.remove = `
-    <td>${book[0]}</td>
-    <td>${book[1]}</td>
-    <td>${book[2]}</td>
-    <td><a href="#" class="button">X</a></td>
-`;
-}
-form.addEventListener("button", function () {
-  removeBookToList(book);
-});
 
 //AddBook-removeBook part end
 
@@ -77,6 +86,24 @@ function alert(msj) {
       document.querySelector(".success").remove();
     }, 3e3);
   }
+  if (msj == "delete") {
+    var alertdiv = document.getElementById("alert");
+    var p = document.createElement("p");
+    p.className = "success";
+    p.innerText = "Book Removed!";
+    alertdiv.appendChild(p);
+    setTimeout(function () {
+      document.querySelector(".success").remove();
+    }, 3e3);
+  }
 }
 
 //Warning Part end
+
+function deleterow(row, index) {
+  row.parentNode.removeChild(row);
+  if (index > -1) {
+    books.splice(index, 1);
+    alert("delete");
+  }
+}
