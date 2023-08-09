@@ -1,19 +1,29 @@
-var title = document.querySelector("#title");
-var author = document.querySelector("#author");
-var isbn = document.querySelector("#ISBN");
-var booklist = document.querySelector("#book-list");
-var form = document.getElementById("form");
-var books = [];
+class Book {
+  constructor(title, author, isbn) {
+    (this.title = title), (this.author = author), (this.isbn = isbn);
+  }
+  title = document.getElementById("title");
+  author = document.getElementById("author");
+  isbn = document.getElementById("isbn");
+}
+
+let title = document.querySelector("#title");
+let author = document.querySelector("#author");
+let isbn = document.querySelector("#ISBN");
+let booklist = document.querySelector("#book-list");
+let form = document.getElementById("form");
+let books = [];
+let bookL = new Book(title, author, isbn);
+
 //input alma
 
 //Form event listener
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-  var data = new FormData(form);
-
-  var title = data.get("title");
-  var author = data.get("author");
-  var isbn = data.get("isbn");
+  let data = new FormData(form);
+  let title = data.get("title");
+  let author = data.get("author");
+  let isbn = data.get("isbn");
 
   if (title != "" && author != "" && isbn != "") {
     var book = {
@@ -23,6 +33,7 @@ form.addEventListener("submit", function (e) {
     };
     //addBookToList(book);
     books.push(book);
+    Store.addbook(book);
     console.log(books);
     drawList();
     e.target.reset();
@@ -31,20 +42,25 @@ form.addEventListener("submit", function (e) {
     alert("error");
   }
 });
+document.addEventListener("DOMContentLoaded", function () {
+  books = Store.getBook();
 
+  drawList();
+});
 //Tabloyu her işlemden sonra çizdirmek için kullanılır. Silme işleminden ve ekleme işleminden sonra çağırılacaktır.
-function drawList() {
-  var list = document.querySelector("#book-list");
+const drawList = () => {
+  let list = document.querySelector("#book-list");
   list.innerHTML = "";
-  books.forEach((book) => {
-    var row = document.createElement("tr");
-    var title = document.createElement("td");
-    var author = document.createElement("td");
-    var isbn = document.createElement("td");
-    var deleteButton = document.createElement("td");
-    title.textContent = book.title;
-    author.textContent = book.author;
-    isbn.textContent = book.isbn;
+  books.forEach((bookItem) => {
+    console.log(bookItem);
+    let row = document.createElement("tr");
+    title = document.createElement("td");
+    author = document.createElement("td");
+    isbn = document.createElement("td");
+    let deleteButton = document.createElement("td");
+    title.textContent = bookItem.title;
+    author.textContent = bookItem.author;
+    isbn.textContent = bookItem.isbn;
     deleteButton.textContent = "X";
 
     list.appendChild(row);
@@ -55,20 +71,21 @@ function drawList() {
 
     deleteButton.addEventListener("click", function (e) {
       console.log("tiklandi");
-      var row = e.target.parentNode;
-      var index = Array.prototype.indexOf.call(row.parentNode.children, row);
+      let row = e.target.parentNode;
+      let index = Array.prototype.indexOf.call(row.parentNode.children, row);
       deleterow(row, index);
+      Store.removeBook(book);
     });
   });
-}
+};
 
 //AddBook-removeBook part end
 
 //warning part start
-function alert(msj) {
+const alert = (msj) => {
   if (msj == "error") {
-    var alertdiv = document.getElementById("alert");
-    var p = document.createElement("p");
+    let alertdiv = document.getElementById("alert");
+    let p = document.createElement("p");
     p.className = "error";
     p.innerText = "Please fill in all fields";
     alertdiv.appendChild(p);
@@ -77,8 +94,8 @@ function alert(msj) {
     }, 3e3);
   }
   if (msj == "success") {
-    var alertdiv = document.getElementById("alert");
-    var p = document.createElement("p");
+    let alertdiv = document.getElementById("alert");
+    let p = document.createElement("p");
     p.className = "success";
     p.innerText = "Book Added!";
     alertdiv.appendChild(p);
@@ -96,7 +113,7 @@ function alert(msj) {
       document.querySelector(".success").remove();
     }, 3e3);
   }
-}
+};
 
 //Warning Part end
 
@@ -105,5 +122,32 @@ function deleterow(row, index) {
   if (index > -1) {
     books.splice(index, 1);
     alert("delete");
+  }
+}
+class Store {
+  static getBook() {
+    let books;
+    if (localStorage.getItem("books") === null) {
+      books = [];
+    } else {
+      books = JSON.parse(localStorage.getItem("books"));
+    }
+    return books;
+  }
+
+  static addbook(book) {
+    const books = Store.getBook();
+    books.push(book);
+    console.log(books);
+    localStorage.setItem("books", JSON.stringify(books));
+  }
+  static removeBook(isbn) {
+    const books = Store.getBook();
+    books.forEach((book, index) => {
+      if (book.isbn === isbn) {
+        books.splice(index, 1);
+      }
+    });
+    localStorage.setItem("books", JSON.stringify(books));
   }
 }
